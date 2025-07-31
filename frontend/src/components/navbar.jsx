@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import "./navbar.css" 
-import {Link}  from "react-router-dom"
+import {Link, useNavigate}  from "react-router-dom"
 
 
 const UserIcon = () => (
@@ -25,6 +25,7 @@ const SearchIcon = () => (
 
 export default function Navbar({ activeNav, setActiveNav, searchTerm, setSearchTerm }) {
   
+  const navigate = useNavigate();
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
   }
@@ -38,10 +39,11 @@ export default function Navbar({ activeNav, setActiveNav, searchTerm, setSearchT
   }
 
   const handleLogoutClick = () => {
-    if (window.confirm("¿Estás seguro de que quieres cerrar sesión?")) {
-      alert("Sesión cerrada")
+    if(window.confirm("Estas seguro que quieres cerrar sesion")) {
+      navigate("/login");
     }
-  }
+  };
+
   const navLinks = [
     {name: "Inicio", path: "/dashboard"},
     {name: "Materias", path: "/materias"},
