@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import "./navbar.css" 
+import {Link}  from "react-router-dom"
 
 
 const UserIcon = () => (
@@ -41,6 +42,11 @@ export default function Navbar({ activeNav, setActiveNav, searchTerm, setSearchT
       alert("Sesión cerrada")
     }
   }
+  const navLinks = [
+    {name: "Inicio", path: "/dashboard"},
+    {name: "Materias", path: "/materias"},
+    {name: "Tareas", path: "/tareas"} 
+  ]
 
   return (
     <header className="header">
@@ -56,18 +62,15 @@ export default function Navbar({ activeNav, setActiveNav, searchTerm, setSearchT
       </div>
 
       <nav className="header-center">
-        {["Inicio", "Materias", "Tareas"].map((item) => (
-          <a
-            key={item}
-            href="#"
-            className={`nav-link ${activeNav === item ? "active" : ""}`}
-            onClick={(e) => {
-              e.preventDefault()
-              handleNavClick(item)
-            }}
-          >
-            {item}
-          </a>
+        {navLinks.map((link) => (
+        <Link
+          key={link.name}
+          to={link.path}
+          className={`nav-link ${activeNav === link.name ? "active" : ""}`}
+          onClick={() => setActiveNav(link.name)}
+        >
+          {link.name}
+        </Link>
         ))}
       </nav>
 

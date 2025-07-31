@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Registro from './pages/login/registro';
 import Login from './pages/login/login';
 import Dashboard from './pages/dashboard/dashboard';
