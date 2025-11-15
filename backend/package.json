@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "index.js"
+  },
+  "keywords": [],
+  "author": "Michael Zuluaga",
+  "license": "ISC",
+  "description": "App gestor de notas y tiempo estudiantil",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "pg": "^8.16.3"
+  }
+}
