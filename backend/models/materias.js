@@ -31,3 +31,18 @@ exports.listarMaterias = async (req, res) => {
         
     }
 }
+
+exports.actualizarMateria = async (req, res) => {
+    const {id_usuario} = req.params;
+    const {nombre_materia, descripcion} = req.body;
+
+    try {
+        const result = await db.query(
+            "UPDATE materias SET nombre_materia = $1, descripcion = $2 WHERE id = $3 RETURNING *"
+        )
+
+        res.status(200).json({msg: 'materia actualizada correctamente', materia: result.rows[0]});
+    } catch (error) {
+       res.status(500).json({msg: 'Hubo un error al actualizar la materia: ', error: error.message}); 
+    }
+}
