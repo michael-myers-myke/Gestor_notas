@@ -5,6 +5,7 @@ const pool = require('./db/conection');
 
 const { router: user} = require ('./routes/user.routes');
 const {router: materias} = require ('./routes/materias.routes');
+const {router: tareas} = require('./routes/tareas.routes');
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use('/api', user);
 app.use('/api', materias);
+app.use('/api', tareas);
 
 
 app.get('/', (req, res) => {

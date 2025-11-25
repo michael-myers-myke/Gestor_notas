@@ -9,9 +9,9 @@ const {
 } = require('../models/tareas');
 
 
-router.post('/crearTarea', crearTarea);
-router.get('/listarTarea', listarTarea);
-router.put('/actualizarTarea', actualizarTarea);
+router.post('/crearTarea/:id_materia', crearTarea);
+router.get('/listarTarea/:id', listarTarea);
+router.put('/actualizarTarea/:id', actualizarTarea);
 
 
 module.exports = {
