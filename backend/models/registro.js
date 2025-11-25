@@ -1,12 +1,15 @@
     const db = require('../db/conection');
+    const bcrypt = require('bcrypt');
 
     //Funcion para crear los usuarios
     exports.crearUsuarios = async (req, res) => {
         const {nombre, email, password} = req.body;
         try {
+
+            const hashPassword = await bcrypt.hash(password, 10);
             const result = await db.query(
                 "INSERT INTO usuarios (nombre, email, password) VALUES ($1, $2, $3) RETURNING *", 
-                [nombre, email, password]
+                [nombre, email, hashPassword]
             )
 
             res.status(201).json({msg: 'Usuario creado correctamente: ', usuario: result.rows[0] });
