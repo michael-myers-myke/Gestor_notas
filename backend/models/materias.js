@@ -28,9 +28,9 @@ exports.listarMaterias = async (req, res) => {
         
         res.status(200).json({msg: 'Las materias del usuario son: ', materias: result.rows[0]});
     } catch (error) {
-        
+        res.status(500).json({msg: "hubo un problema al listar las materias: ", error: error.message});
     }
-}
+};
 
 exports.actualizarMateria = async (req, res) => {
     const {id} = req.params;
