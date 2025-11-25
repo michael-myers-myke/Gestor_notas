@@ -18,12 +18,12 @@ exports.crearMateria = async (req, res) => {
 
 
 exports.listarMaterias = async (req, res) => {
-    const {id_usuario} = req.params;
+    const {id} = req.params;
 
     try {
         const result = await db.query(
-            "SELECT * FROM materias WHERE id_usuario = $1",
-            [id_usuario]
+            "SELECT * FROM materias WHERE id = $1",
+            [id]
         )
         
         res.status(200).json({msg: 'Las materias del usuario son: ', materias: result.rows[0]});
@@ -33,12 +33,13 @@ exports.listarMaterias = async (req, res) => {
 }
 
 exports.actualizarMateria = async (req, res) => {
-    const {id_usuario} = req.params;
+    const {id} = req.params;
     const {nombre_materia, descripcion} = req.body;
 
     try {
         const result = await db.query(
-            "UPDATE materias SET nombre_materia = $1, descripcion = $2 WHERE id = $3 RETURNING *"
+            "UPDATE materias SET nombre_materia = $1, descripcion = $2 WHERE id = $3 RETURNING *",
+            [nombre_materia,descripcion, id]
         )
 
         res.status(200).json({msg: 'materia actualizada correctamente', materia: result.rows[0]});
