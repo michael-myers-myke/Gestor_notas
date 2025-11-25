@@ -6,7 +6,7 @@ exports.crearMateria = async (req, res) => {
 
     try {
         const result = await db.query(
-            "INSERT INTO materias WHERE id_usuario = $1 (nombre_materia, descripcion, id_usuario) VALUES ($1, $2, $3)",
+            "INSERT INTO materias (nombre_materia, descripcion, id_usuario) VALUES ($1, $2, $3) RETURNING *",
             [nombre_materia, descripcion, id_usuario]
         )
 

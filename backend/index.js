@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const pool = require('./db/conection');
 
-const { router } = require ('./routes/user.routes');
+const { router: user} = require ('./routes/user.routes');
+const {router: materias} = require ('./routes/materias.routes');
 
 
 const app = express();
@@ -13,7 +14,8 @@ app.use(cors({})) //Aqui es donde se usaran los endpoints para conectarlos con e
 
 app.use(express.json());
 
-app.use('/api', router);
+app.use('/api', user);
+app.use('/api', materias);
 
 
 app.get('/', (req, res) => {
