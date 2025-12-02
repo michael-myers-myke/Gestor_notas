@@ -7,11 +7,13 @@ const {
     actualizarUsuario
 } = require('../models/registro');
 
+const {verificarToken, Propietario} = require('../auth/middlewares/auth.middlewares')
+
 
 //Enrutadores para llamarlos desde postman o la API
 router.post('/crearUsuario', crearUsuarios);
-router.get('/listarUsuarios/:id', listarUsuarios);
-router.put('/actualizarUsuario/:id', actualizarUsuario);
+router.get('/listarUsuarios/:id', verificarToken, Propietario, listarUsuarios);
+router.put('/actualizarUsuario/:id', verificarToken, Propietario, actualizarUsuario);
 
 
 module.exports = {
