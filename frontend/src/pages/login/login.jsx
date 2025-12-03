@@ -3,7 +3,6 @@ import "./registro.css";
 
 function Registro() {
   const [formData, setFormData] = useState({
-    nombre: "",
     email: "",
     password: "",
   });
@@ -20,7 +19,6 @@ function Registro() {
     e.preventDefault();
 
     const newErrors = {};
-    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es requerido";
     if (!formData.email.trim()) newErrors.email = "El correo es requerido";
     if (!formData.password.trim()) newErrors.password = "La contraseña es requerida";
 
@@ -32,7 +30,6 @@ function Registro() {
         alert("¡Registro exitoso!");
         setIsLoading(false);
         setFormData({
-          nombre: "",
           email: "",
           password: "",
         });
@@ -71,21 +68,6 @@ function Registro() {
           <h2 className="form-title">Iniciar Sesion</h2>
 
           <form onSubmit={handleSubmit} className="form">
-            <div className="input-group">
-              <label htmlFor="nombre" className="label">Nombre</label>
-              <input
-                id="nombre"
-                name="nombre"
-                type="text"
-                placeholder="Ingresa tu nombre"
-                value={formData.nombre}
-                onChange={handleInputChange}
-                className={`input ${errors.nombre ? "input-error" : ""}`}
-                required
-              />
-              {errors.nombre && <span className="error-message">{errors.nombre}</span>}
-            </div>
-
             <div className="input-group">
               <label htmlFor="email" className="label">Email</label>
               <input
