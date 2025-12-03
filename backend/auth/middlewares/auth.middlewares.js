@@ -10,7 +10,7 @@ exports.verificarToken = async (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); //Toma los datos del payload que se mandan desde el controlador del login
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); //Toma los datos del payload que se mandan desde el controlador del login - Basicamente guarda la info que se le paso del usuario en este caso el id y el correp
         req.user = decoded;
         next();
     } catch (error) {
