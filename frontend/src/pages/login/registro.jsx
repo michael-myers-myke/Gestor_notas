@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./registro.css";
 
 function Registro() {
@@ -41,7 +41,7 @@ function Registro() {
   };
 
   const handleLoginClick = () => {
-    alert("Redirigiendo al login...");
+    window.location.href = "/Login"
   };
 
   return (
