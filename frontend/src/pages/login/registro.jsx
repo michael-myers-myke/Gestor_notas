@@ -1,49 +1,43 @@
 import { useState } from "react";
 import "./registro.css";
+import api from '../../services/api';
+import {Link, useNavigate} from 'react-router-dom';
+import Swal from "sweetalert2";
 
-function Registro() {
-  const [formData, setFormData] = useState({
-    nombre: "",
-    email: "",
-    password: "",
-  });
+function Registro () {
 
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  //Se llaman los estados a utilizar
+  const [nombre, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [id, setId] = useState("");
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleRegistro = async (e) => {
     e.preventDefault();
 
-    const newErrors = {};
-    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es requerido";
-    if (!formData.email.trim()) newErrors.email = "El correo es requerido";
-    if (!formData.password.trim()) newErrors.password = "La contraseña es requerida";
+    try {
+      const res = await api.post('/crearUsuario', {nombre, email, password});
 
-    setErrors(newErrors);
+      Swal.fire({
+        icon: "success",
+        title: "Registro exitoso",
+        text: "Usuario registrado correctamente",
+        confirmButtonText: "Continuar"
+      });
 
-    if (Object.keys(newErrors).length === 0) {
-      setIsLoading(true);
-      setTimeout(() => {
-        alert("¡Registro exitoso!");
-        setIsLoading(false);
-        setFormData({
-          nombre: "",
-          email: "",
-          password: "",
-        });
-      }, 1500);
+
+      navigate('/login');
+    } catch (error) {
+      console.error(error)
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo registrar el usuario"
+      })
     }
-  };
-
-  const handleLoginClick = () => {
-    window.location.href = "/Login"
-  };
-
+  }
   return (
     <div className="signup-container">
       {/* Lado izquierdo */}
@@ -70,7 +64,7 @@ function Registro() {
         <div className="form-container">
           <h2 className="form-title">Crea tu cuenta</h2>
 
-          <form onSubmit={handleSubmit} className="form">
+          <form onSubmit={handleRegistro} className="form">
             <div className="input-group">
               <label htmlFor="nombre" className="label">Nombre</label>
               <input
@@ -78,12 +72,12 @@ function Registro() {
                 name="nombre"
                 type="text"
                 placeholder="Ingresa tu nombre"
-                value={formData.nombre}
-                onChange={handleInputChange}
-                className={`input ${errors.nombre ? "input-error" : ""}`}
+                value={nombre}
+                onChange={(e) => setName(e.target.value)}
+                className={`input`}
                 required
               />
-              {errors.nombre && <span className="error-message">{errors.nombre}</span>}
+              {/* {errors.name && <span className="error-message">{errors.name}</span>} */}
             </div>
 
             <div className="input-group">
@@ -93,12 +87,12 @@ function Registro() {
                 name="email"
                 type="email"
                 placeholder="Ingresa tu correo electrónico"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`input ${errors.email ? "input-error" : ""}`}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`input`}
                 required
               />
-              {errors.email && <span className="error-message">{errors.email}</span>}
+              {/* {errors.email && <span className="error-message">{errors.email}</span>} */}
             </div>
 
             <div className="input-group">
@@ -108,22 +102,22 @@ function Registro() {
                 name="password"
                 type="password"
                 placeholder="Ingresa una contraseña"
-                value={formData.password}
-                onChange={handleInputChange}
-                className={`input ${errors.password ? "input-error" : ""}`}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`input`}
                 required
               />
-              {errors.password && <span className="error-message">{errors.password}</span>}
+              {/* {errors.password && <span className="error-message">{errors.password}</span>} */}
             </div>
 
-            <button type="submit" className="submit-button" disabled={isLoading}>
-              {isLoading ? "Registrando..." : "Registrar"}
+            <button type="submit" className="submit-button">
+              Registrarse
             </button>
           </form>
 
           <div className="login-link">
-            <button type="button" className="link-button" onClick={handleLoginClick}>
-              Click para iniciar sesión
+            <button type="button" className="link-button">
+              Iniciar sesion
             </button>
           </div>
         </div>

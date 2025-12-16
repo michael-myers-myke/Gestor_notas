@@ -1,45 +1,59 @@
 import React, { useState } from "react";
 import "./registro.css";
+import api from '../../services/api'
+import Swal from "sweetalert2";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 function Registro() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    try {
+      const res = await api.post('/login', {email, password})
 
-    const newErrors = {};
-    if (!formData.email.trim()) newErrors.email = "El correo es requerido";
-    if (!formData.password.trim()) newErrors.password = "La contraseña es requerida";
+      if(res.data.token){
+        localStorage.setItem('token', res.data.token);
 
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      setIsLoading(true);
-      setTimeout(() => {
-        alert("¡Registro exitoso!");
-        setIsLoading(false);
-        setFormData({
-          email: "",
-          password: "",
+        Swal.fire({
+          icon: "success",
+          title: "Inicio de sesion exitoso",
+          text: `Bienvenido usuario ${res.data.nombre}`
         });
-      }, 1500);
-    }
-  };
 
-  const handleLoginClick = () => {
-    alert("Redirigiendo al login...");
-  };
+        navigate('/dashboard');
+
+        const decoded = jwtDecode(res.data.token);
+      }else {
+
+        await Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo autenticar"
+        })
+      }
+    } catch (error) {
+      console.log(error)
+
+      if(error.response.status === 401) {
+        Swal.fire({
+          icon: "error",
+          title: "Error al iniciar sesion",
+          text: "Datos incorrectos, intenta nuevamente"
+        })
+      }else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error inesperado"
+        })
+      }
+    }
+  }
 
   return (
     <div className="signup-container">
@@ -67,7 +81,7 @@ function Registro() {
         <div className="form-container">
           <h2 className="form-title">Iniciar Sesion</h2>
 
-          <form onSubmit={handleSubmit} className="form">
+          <form onSubmit={handleLogin} className="form">
             <div className="input-group">
               <label htmlFor="email" className="label">Email</label>
               <input
@@ -75,12 +89,12 @@ function Registro() {
                 name="email"
                 type="email"
                 placeholder="Ingresa tu correo electrónico"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`input ${errors.email ? "input-error" : ""}`}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`input`}
                 required
               />
-              {errors.email && <span className="error-message">{errors.email}</span>}
+              {/* {errors.email && <span className="error-message">{errors.email}</span>} */}
             </div>
 
             <div className="input-group">
@@ -90,16 +104,16 @@ function Registro() {
                 name="password"
                 type="password"
                 placeholder="Ingresa una contraseña"
-                value={formData.password}
-                onChange={handleInputChange}
-                className={`input ${errors.password ? "input-error" : ""}`}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`input`}
                 required
               />
-              {errors.password && <span className="error-message">{errors.password}</span>}
+              {/* {errors.password && <span className="error-message">{errors.password}</span>} */}
             </div>
 
-            <button type="submit" className="submit-button" disabled={isLoading}>
-              {isLoading ? "Registrando..." : "Iniciar"}
+            <button type="submit" className="submit-button">
+              Iniciar Sesion
             </button>
           </form>
 

@@ -12,7 +12,11 @@ const {router: login} = require('./auth/routes/auth.routes');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({})) //Aqui es donde se usaran los endpoints para conectarlos con el front usando react
+app.use(cors({
+    origin: [
+        "http://localhost:5173" //Puerto por defecto para uso de la api desde el front con axios
+    ]
+})) //Aqui es donde se usaran los endpoints para conectarlos con el front usando react
 
 app.use(express.json());
 
