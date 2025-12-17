@@ -22,7 +22,7 @@ function Registro() {
         Swal.fire({
           icon: "success",
           title: "Inicio de sesion exitoso",
-          text: `Bienvenido usuario ${res.data.nombre}`
+          text: `Bienvenido`
         });
 
         navigate('/dashboard');

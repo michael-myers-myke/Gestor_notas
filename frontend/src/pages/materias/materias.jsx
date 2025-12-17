@@ -1,96 +1,32 @@
-"use client"
 
-import { useState } from "react"
+import { useState, useEffect} from "react"
 import Swal from "sweetalert2"
 import "./materias.css"
 import Navbar from "../../components/navbar"
+import { Navigate, useNavigate } from "react-router-dom"
+import api from '../../services/api'
+import { autenticado } from "../../services/auth" 
 
 
 
 export default function Materias() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [activeNav, setActiveNav] = useState("Materias")
-  const [loadingStates, setLoadingStates] = useState({})
-
-  // Datos de las materias
-  const [materias, setMaterias] = useState([
-    {
-      id: "1",
-      title: "Química",
-      description: "Esta es mi materia creada química",
-      enabled: true,
-    },
-    {
-      id: "2",
-      title: "Física",
-      description: "Esta es mi materia creada Física",
-      enabled: true,
-    },
-    {
-      id: "3",
-      title: "Inglés",
-      description: "Esta es mi materia creada inglés",
-      enabled: true,
-    },
-  ])
+  const [materias, setMaterias] = useState([]);
+  const navigate = useNavigate();
 
 
 
-  const handleDisableMateria = async (materiaId) => {
-    const materia = materias.find((m) => m.id === materiaId)
-    const action = materia.enabled ? "deshabilitar" : "habilitar"
-
-    const confirmAction = window.confirm(`¿Estás seguro de que quieres ${action} la materia "${materia.title}"?`)
-
-    if (!confirmAction) return
-
-    // Mostrar estado de carga
-    setLoadingStates((prev) => ({ ...prev, [materiaId]: true }))
-
-    try {
-      // Simular llamada a API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Actualizar estado de la materia
-      setMaterias((prev) =>
-        prev.map((materia) => (materia.id === materiaId ? { ...materia, enabled: !materia.enabled } : materia)),
-      )
-
-      // Mostrar mensaje de éxito
-      await Swal.fire({
-        title: "¡Éxito!",
-        text: `Materia ${action}da exitosamente`,
-        icon: "success",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3b82f6",
-      })
-    } catch (error) {
-      console.error("Error:", error)
-      await Swal.fire({
-        title: "Error",
-        text: `Error al ${action} la materia`,
-        icon: "error",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#ef4444",
-      })
-    } finally {
-      // Quitar estado de carga
-      setLoadingStates((prev) => ({ ...prev, [materiaId]: false }))
-    }
-  }
-
-  const handleCreateMateria = async () => {
+  const CreateMateria = async () => {
     const { value: formValues } = await Swal.fire({
       title: "Crear Materia",
       html: `
         <div class="create-form">
           <div class="form-group">
             <label class="form-label">Nombre:</label>
-            <input id="swal-input1" class="form-input" placeholder="Ingresa el nombre de tu materia" />
+            <input id="swal-nombre" class="form-input" placeholder="Ingresa el nombre de tu materia" />
           </div>
           <div class="form-group">
             <label class="form-label">Descripción:</label>
-            <textarea id="swal-input2" class="form-textarea" placeholder="Ingresa una descripción para tu materia..."></textarea>
+            <textarea id="swal-descripcion" class="form-textarea" placeholder="Ingresa una descripción para tu materia..."></textarea>
           </div>
         </div>
       `,
@@ -101,8 +37,8 @@ export default function Materias() {
       confirmButtonColor: "#3b82f6",
       cancelButtonColor: "#6b7280",
       preConfirm: () => {
-        const nombre = document.getElementById("swal-input1").value
-        const descripcion = document.getElementById("swal-input2").value
+        const nombre = document.getElementById("swal-nombre").value
+        const descripcion = document.getElementById("swal-descripcion").value
 
         if (!nombre) {
           Swal.showValidationMessage("El nombre es requerido")
@@ -131,58 +67,33 @@ export default function Materias() {
           return false
         }
 
-        return [nombre, descripcion]
+        return {nombre, descripcion}
       },
     })
 
     if (formValues) {
       const [nombre, descripcion] = formValues
 
-      // Mostrar loading
-      Swal.fire({
-        title: "Creando materia...",
-        text: "Por favor espera",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading()
-        },
-      })
+    }
 
-      try {
-        // Simular llamada a API
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      const res = await api.post('/crearMateria', {nombre: formValues.nombre, descripcion: formValues.descripcion});
 
-        // Crear nueva materia
-        const newMateria = {
-          id: (materias.length + 1).toString(),
-          title: nombre,
-          description: descripcion,
-          enabled: true,
-        }
+      setMaterias(prev => [...prev, res.data.materia]);
 
-        // Agregar a la lista
-        setMaterias((prev) => [...prev, newMateria])
-
-        // Mostrar mensaje de éxito
-        await Swal.fire({
-          title: "¡Materia creada!",
-          text: `La materia "${nombre}" ha sido creada exitosamente`,
-          icon: "success",
-          confirmButtonText: "¡Genial!",
-          confirmButtonColor: "#3b82f6",
-        })
-      } catch (error) {
-        console.error("Error:", error)
-        await Swal.fire({
-          title: "Error",
-          text: "Hubo un error al crear la materia. Inténtalo de nuevo.",
-          icon: "error",
-          confirmButtonText: "OK",
-          confirmButtonColor: "#ef4444",
-        })
-      }
+      Swal.fire(
+        "Materia Creada",
+        "La materia se creo correctamente",
+        "success"
+      );
+      
+    } catch (error) {
+      console.log(error)
+      Swal.fire(
+        "Error",
+        "No se pudo crear la materia",
+        "error"
+      );
     }
   }
 
@@ -212,18 +123,18 @@ export default function Materias() {
           {filteredMaterias.length > 0 ? (
             <div className="materias-grid">
               {filteredMaterias.map((materia) => (
-                <div key={materia.id} className={`materia-card ${!materia.enabled ? "disabled" : ""}`}>
+                <div key={materias.id} className={`materia-card ${!materias.enabled ? "disabled" : ""}`}>
                   <div>
-                    <h3 className="materia-title">{materia.title}</h3>
-                    <p className="materia-description">{materia.description}</p>
+                    <h3 className="materia-title">{materias.title}</h3>
+                    <p className="materia-description">{materias.description}</p>
                   </div>
 
                   <button
                     className="disable-button"
-                    onClick={() => handleDisableMateria(materia.id)}
-                    disabled={loadingStates[materia.id]}
+                    onClick={() => handleDisableMateria(materias.id)}
+                    disabled={loadingStates[materias.id]}
                   >
-                    {loadingStates[materia.id] ? "Procesando..." : materia.enabled ? "Deshabilitar" : "Habilitar"}
+                    {loadingStates[materias.id] ? "Procesando..." : materias.enabled ? "Deshabilitar" : "Habilitar"}
                   </button>
                 </div>
               ))}
@@ -238,7 +149,7 @@ export default function Materias() {
           )}
 
           <div className="create-button-container">
-            <button className="create-button" onClick={handleCreateMateria}>
+            <button className="create-button" onClick={CreateMateria}>
               Crear materia
             </button>
           </div>
