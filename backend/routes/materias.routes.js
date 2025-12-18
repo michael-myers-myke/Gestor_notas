@@ -8,7 +8,7 @@ const {
 } = require('../models/materias');
 
 router.post('/crearMateria/:id_usuario', crearMateria);
-router.get('/listarMaterias/:id', listarMaterias);
+router.get('/listarMaterias/:id_usuario', listarMaterias);
 router.put('/actualizarMaterias/:id', actualizarMateria);
 
 

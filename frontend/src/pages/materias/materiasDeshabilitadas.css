@@ -42,7 +42,7 @@ body {
   margin-bottom: 3rem;
 }
 
-.materia-card {
+.materia-card-deshabilitadas{
   background: white;
   border: 2px solid #d1d5db;
   border-radius: 1rem;
@@ -57,7 +57,7 @@ body {
   position: relative;
 }
 
-.materia-card::before {
+.materia-card-deshabilitadas::before {
   content: "";
   position: absolute;
   top: 0;
@@ -67,15 +67,15 @@ body {
   background-color: rgba(243, 244, 246, 0.3);
   border-radius: 1rem;
   pointer-events: none;
-}
+} 
 
-.materia-card:hover {
+.materia-card-deshabilitadas {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
   opacity: 1;
 }
 
-.materia-title {
+.materia-title-deshabilitadas{
   font-size: 1.5rem;
   font-weight: 600;
   color: #6b7280;
@@ -84,7 +84,7 @@ body {
   z-index: 1;
 }
 
-.materia-description {
+.materia-description-deshabilitadas{
   color: #9ca3af;
   font-size: 1rem;
   line-height: 1.5;

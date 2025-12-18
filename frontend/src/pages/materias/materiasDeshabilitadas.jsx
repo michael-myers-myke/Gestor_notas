@@ -139,10 +139,10 @@ export default function MateriasDeshabilitadas() {
           {filteredMaterias.length > 0 ? (
             <div className="materias-grid">
               {filteredMaterias.map((materia) => (
-                <div key={materia.id} className="materia-card" data-materia-id={materia.id}>
+                <div key={materia.id} className="materia-card-deshabilitadas" data-materia-id={materia.id}>
                   <div>
-                    <h3 className="materia-title">{materia.title}</h3>
-                    <p className="materia-description">{materia.description}</p>
+                    <h3 className="materia-title-deshabilitados">{materia.title}</h3>
+                    <p className="materia-description-deshabilitados">{materia.description}</p>
                   </div>
 
                   <button

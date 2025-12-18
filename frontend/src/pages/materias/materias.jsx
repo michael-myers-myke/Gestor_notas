@@ -1,18 +1,29 @@
 
-import { useState, useEffect} from "react"
+import { useState, useEffect } from "react"
 import Swal from "sweetalert2"
 import "./materias.css"
 import Navbar from "../../components/navbar"
-import { Navigate, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import api from '../../services/api'
-import { autenticado } from "../../services/auth" 
+import { autenticado } from "../../services/auth"
+import { userId } from '../../services/auth'
+
 
 
 
 export default function Materias() {
   const [materias, setMaterias] = useState([]);
   const navigate = useNavigate();
+  const id_usuario = userId();
 
+  useEffect(() => {
+    if (!autenticado()) {
+      navigate('/login');
+      return;
+    }
+
+    ListarMaterias();
+  }, [navigate]);
 
 
   const CreateMateria = async () => {
@@ -60,24 +71,21 @@ export default function Materias() {
           return false
         }
 
-        // Verificar si ya existe una materia con el mismo nombre
-        const existingMateria = materias.find((m) => m.title.toLowerCase() === nombre.toLowerCase())
-        if (existingMateria) {
-          Swal.showValidationMessage("Ya existe una materia con ese nombre")
-          return false
-        }
+        // Verificar si ya existe una materia con el mismo nombre 
+        // const existingMateria = materias.find((m) => m.title.toLowerCase() === nombre.toLowerCase())
+        // if (existingMateria) {
+        //   Swal.showValidationMessage("Ya existe una materia con ese nombre")
+        //   return false
+        // }
 
-        return {nombre, descripcion}
-      },
-    })
+        return { nombre, descripcion }
+      }
+    });
 
-    if (formValues) {
-      const [nombre, descripcion] = formValues
-
-    }
+    if (!formValues) return;
 
     try {
-      const res = await api.post('/crearMateria', {nombre: formValues.nombre, descripcion: formValues.descripcion});
+      const res = await api.post(`/crearMateria/${id_usuario}`, { nombre_materia: formValues.nombre, descripcion: formValues.descripcion });
 
       setMaterias(prev => [...prev, res.data.materia]);
 
@@ -86,7 +94,7 @@ export default function Materias() {
         "La materia se creo correctamente",
         "success"
       );
-      
+
     } catch (error) {
       console.log(error)
       Swal.fire(
@@ -97,21 +105,36 @@ export default function Materias() {
     }
   }
 
-  // Filtrar materias basado en la búsqueda
-  const filteredMaterias = materias.filter(
-    (materia) =>
-      materia.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      materia.description.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const ListarMaterias = async () => {
+    try {
+      const res = await api.get(`/listarMaterias/${id_usuario}`)
+      // console.log("res backend: ", res.data);
+      setMaterias(res.data.materias);
+    } catch (error) {
+      console.error(error);
+      Swal.fire(
+        "Error",
+        "No se pudieron encontrar las materias del usuario",
+        "error"
+      );
+    }
+  };
+
+  // // Filtrar materias basado en la búsqueda
+  // const filteredMaterias = materias.filter(
+  //   (materia) =>
+  //     materia.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     materia.description.toLowerCase().includes(searchTerm.toLowerCase()),
+  // )
 
   return (
     <div className="materias-page">
       {/* Navbar reutilizable */}
       <Navbar
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+      // activeNav={activeNav}
+      // setActiveNav={setActiveNav}
+      // searchTerm={searchTerm}
+      // setSearchTerm={setSearchTerm}
       />
       {/* Main Content */}
       <main className="main-content">
@@ -120,30 +143,31 @@ export default function Materias() {
         <section>
           <h2 className="section-title">Tus materias creadas</h2>
 
-          {filteredMaterias.length > 0 ? (
-            <div className="materias-grid">
-              {filteredMaterias.map((materia) => (
-                <div key={materias.id} className={`materia-card ${!materias.enabled ? "disabled" : ""}`}>
-                  <div>
-                    <h3 className="materia-title">{materias.title}</h3>
-                    <p className="materia-description">{materias.description}</p>
-                  </div>
 
-                  <button
-                    className="disable-button"
-                    onClick={() => handleDisableMateria(materias.id)}
-                    disabled={loadingStates[materias.id]}
-                  >
-                    {loadingStates[materias.id] ? "Procesando..." : materias.enabled ? "Deshabilitar" : "Habilitar"}
-                  </button>
+          <div className="materias-grid">
+            {materias.map((materia) => (
+              <div key={materia.id} className="materia-card">
+                <div>
+                  <h3 className="materia-title">{materia.nombre_materia}</h3>
+                  <p className="materia-description">{materia.descripcion}</p>
                 </div>
-              ))}
-            </div>
-          ) : (
+                <button
+                  className="disable-button"
+                // onClick={() => handleDisableMateria(materias.id)}
+                // disabled={loadingStates[materias.id]}
+                >
+                  {/* {loadingStates[materias.id] ? "Procesando..." : materias.enabled ? "Deshabilitar" : "Habilitar"} */}
+                  Deshabilitar
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {materias.length === 0 && (
             <div className="empty-state">
               <h3>No se encontraron materias</h3>
               <p>
-                {searchTerm ? `No hay materias que coincidan con "${searchTerm}"` : "Aún no has creado ninguna materia"}
+                {/* {searchTerm ? `No hay materias que coincidan con ""` : "Aún no has creado ninguna materia"} */}
               </p>
             </div>
           )}

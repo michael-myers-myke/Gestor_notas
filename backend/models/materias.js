@@ -18,15 +18,15 @@ exports.crearMateria = async (req, res) => {
 
 
 exports.listarMaterias = async (req, res) => {
-    const {id} = req.params;
+    const {id_usuario} = req.params;
 
     try {
         const result = await db.query(
-            "SELECT * FROM materias WHERE id = $1",
-            [id]
+            "SELECT * FROM materias WHERE id_usuario = $1",
+            [id_usuario]
         )
         
-        res.status(200).json({msg: 'Las materias del usuario son: ', materias: result.rows[0]});
+        res.status(200).json({msg: 'Las materias del usuario son: ', materias: result.rows});
     } catch (error) {
         res.status(500).json({msg: "hubo un problema al listar las materias: ", error: error.message});
     }
