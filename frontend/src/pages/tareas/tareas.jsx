@@ -6,6 +6,7 @@ import Navbar from "../../components/navbar"
 import { useNavigate } from "react-router-dom"
 import api from '../../services/api'
 import { autenticado } from "../../services/auth"
+import Materias from "../materias/materias"
 
 // Iconos SVG reutilizados
 const EditIcon = () => (
@@ -34,15 +35,46 @@ export default function Tareas() {
     const { values: formValues } = await Swal.fire({
       title: "Crear Tarea",
       html: `
-      <select id="select-maeteria" class="swal2-input">
-      ${materia}`
+      <select id="id-maeteria" class="swal2-input">
+      ${materia.map(m => `<option value="${m.id}">
+        ${m.nombre_materia}
+        </option>`
+      ).join("")}
+      </select>
+      
+      <input id="nombre-tarea" class="swal2-input" placeholder="Nombre de la tarea">
+      <input id="fecha-tarea" class="swal2-input" type="date">`,
+
+      preConfirm: () => {
+        return {
+          id_materia: document.getElementById("id-materia").value,
+          nombre_tarea: document.getElementById("nombre-tarea").value,
+          fecha_expiracion: document.getElementById("fecha-tarea").value
+        }
+      }
     })
+
+    if(!formValues) return;
     try {
+      const res = await api.get(`/crearTarea/${id_materia}`, {nombre_tarea: formValues.nombre_tarea, fecha_creacion: formValues.fecha});
 
+      setTareas(prev => [...prev, res.data.tareas]);
+
+      Swal.fire(
+        "Tarea Creada",
+        "La tarea se ha creado correctamente",
+        "Error"
+      );
     } catch (error) {
-
+      console.error(error)
+      Swal.fire(
+        "Error",
+        "No se pudo crear la tarea",
+        "error"
+      );
     }
   }
+  
   const cargarMaterias = async () => {
     try {
       const res = await api.get(`/listarMaterias/${id_usuario}`);
@@ -53,6 +85,7 @@ export default function Tareas() {
       console.log("No se han encontrado materias para el usuario");
     }
   }
+  
   const listarMaterias = async () => {
     try {
       const res = await api.get(`/Listartareas/${id_usuario}`)
