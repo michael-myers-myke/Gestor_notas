@@ -6,7 +6,8 @@ import Navbar from "../../components/navbar"
 import { useNavigate } from "react-router-dom"
 import api from '../../services/api'
 import { autenticado } from "../../services/auth"
-import Materias from "../materias/materias"
+// import Materias from "../materias/materias"
+import { userId } from "../../services/auth"
 
 // Iconos SVG reutilizados
 const EditIcon = () => (
@@ -20,6 +21,7 @@ export default function Tareas() {
   const [tareas, setTareas] = useState([]);
   const [materia, setMateria] = useState([]);
   const navigate = useNavigate();
+  const id_usuario = userId();
 
   useEffect(() => {
     if (!autenticado()) {
@@ -28,7 +30,7 @@ export default function Tareas() {
     }
 
     cargarMaterias();
-    listarMaterias();
+    listarTareas();
   }, [navigate]);
 
   const CrearTarea = async () => {
@@ -54,9 +56,9 @@ export default function Tareas() {
       }
     })
 
-    if(!formValues) return;
+    if (!formValues) return;
     try {
-      const res = await api.get(`/crearTarea/${id_materia}`, {nombre_tarea: formValues.nombre_tarea, fecha_creacion: formValues.fecha});
+      const res = await api.get(`/crearTarea/${formValues.id_materia}`, { nombre_tarea: formValues.nombre_tarea, fecha_creacion: formValues.fecha });
 
       setTareas(prev => [...prev, res.data.tareas]);
 
@@ -74,7 +76,7 @@ export default function Tareas() {
       );
     }
   }
-  
+
   const cargarMaterias = async () => {
     try {
       const res = await api.get(`/listarMaterias/${id_usuario}`);
@@ -85,8 +87,8 @@ export default function Tareas() {
       console.log("No se han encontrado materias para el usuario");
     }
   }
-  
-  const listarMaterias = async () => {
+
+  const listarTareas = async () => {
     try {
       const res = await api.get(`/Listartareas/${id_usuario}`)
 
@@ -119,65 +121,65 @@ export default function Tareas() {
           </button>
         </div>
 
-        {filteredTareas.length > 0 ? (
-          <div className="tareas-grid">
-            {filteredTareas.map((tarea) => (
-              <div key={tarea.id} className={`tarea-card ${!tarea.enabled ? "disabled" : ""}`}>
-                <div className="card-header">
-                  <h3 className="card-title">{tarea.materia}</h3>
-                  <button
-                    className="edit-button"
-                    onClick={() => handleEditTask(tarea.id)}
-                    aria-label={`Editar tarea de ${tarea.materia}`}
-                  >
-                    <EditIcon />
-                  </button>
+
+        <div className="tareas-grid">
+          {tareas.map((tarea) => (
+            <div key={tarea.id} className={`tarea-card ${!tarea.enabled ? "disabled" : ""}`}>
+              <div className="card-header">
+                <h3 className="card-title">{tarea.nombre_materia}</h3>
+                <button
+                  className="edit-button"
+                  onClick={() => handleEditTask(tarea.id)}
+                  aria-label={`Editar tarea de ${tarea.materia}`}
+                >
+                  <EditIcon />
+                </button>
+              </div>
+
+              <div className="card-content">
+                <div className="task-item">
+                  <div className="bullet"></div>
+                  <span className="task-text">{tarea.task}</span>
                 </div>
 
-                <div className="card-content">
-                  <div className="task-item">
-                    <div className="bullet"></div>
-                    <span className="task-text">{tarea.task}</span>
-                  </div>
-
-                  <div className="date-info">
-                    <div>fecha de creacion: {tarea.creationDate}</div>
-                  </div>
-
-                  <div className="date-info">
-                    <div>Fecha de expiracion: {tarea.expirationDate}</div>
-                  </div>
+                <div className="date-info">
+                  <div>fecha de creacion: {tarea.creationDate}</div>
                 </div>
 
-                <div className="card-actions">
-                  <div className="status-section">
-                    <div className="status-label">Estado:</div>
-                    <button
-                      className={`status-button status-${tarea.status}`}
-                      onClick={() => handleStatusClick(tarea.id, tarea.status)}
-                      disabled={!tarea.enabled}
-                    >
-                      {tarea.statusText}
-                    </button>
-                  </div>
-
-                  <button
-                    className="disable-button"
-                    onClick={() => handleDisableTask(tarea.id)}
-                    disabled={loadingStates[tarea.id]}
-                  >
-                    {loadingStates[tarea.id] ? "Procesando..." : tarea.enabled ? "Deshabilitar" : "Habilitar"}
-                  </button>
+                <div className="date-info">
+                  <div>Fecha de expiracion: {tarea.expirationDate}</div>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <h3>No se encontraron tareas</h3>
-            <p>{searchTerm ? `No hay tareas que coincidan con "${searchTerm}"` : "Aún no has creado ninguna tarea"}</p>
-          </div>
-        )}
+
+              <div className="card-actions">
+                <div className="status-section">
+                  <div className="status-label">Estado:</div>
+                  <button
+                    className={`status-button status-${tarea.status}`}
+                    onClick={() => handleStatusClick(tarea.id, tarea.status)}
+                    disabled={!tarea.enabled}
+                  >
+                    {tarea.statusText}
+                  </button>
+                </div>
+
+                <button
+                  className="disable-button"
+                  onClick={() => handleDisableTask(tarea.id)}
+                  disabled={loadingStates[tarea.id]}
+                >
+                  {loadingStates[tarea.id] ? "Procesando..." : tarea.enabled ? "Deshabilitar" : "Habilitar"}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="empty-state">
+          <h3>No se encontraron tareas</h3>
+          {/* <p>{searchTerm ? `No hay tareas que coincidan con "${searchTerm}"` : "Aún no has creado ninguna tarea"}</p> */}
+        </div>
+
       </main>
     </div>
   )
