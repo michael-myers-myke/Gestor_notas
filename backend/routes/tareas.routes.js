@@ -10,7 +10,7 @@ const {
 
 
 router.post('/crearTarea/:id_materia', crearTarea);
-router.get('/listarTarea/:id', listarTarea);
+router.get('/listarTarea/:id_usuario', listarTarea);
 router.put('/actualizarTarea/:id', actualizarTarea);
 
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import Swal from "sweetalert2"
 import "./tareas.css"
@@ -6,7 +5,6 @@ import Navbar from "../../components/navbar"
 import { useNavigate } from "react-router-dom"
 import api from '../../services/api'
 import { autenticado } from "../../services/auth"
-// import Materias from "../materias/materias"
 import { userId } from "../../services/auth"
 
 // Iconos SVG reutilizados
@@ -18,99 +16,106 @@ const EditIcon = () => (
 
 export default function Tareas() {
 
-  const [tareas, setTareas] = useState([]);
-  const [materia, setMateria] = useState([]);
-  const navigate = useNavigate();
-  const id_usuario = userId();
+  const [tareas, setTareas] = useState([])
+  const [materias, setMateria] = useState([])
+  const navigate = useNavigate()
+  const id_usuario = userId()
 
   useEffect(() => {
     if (!autenticado()) {
-      navigate('/login');
+      navigate('/login')
       return
     }
 
-    cargarMaterias();
-    listarTareas();
-  }, [navigate]);
+    cargarMaterias()
+    listarTareas()
+  }, [navigate])
 
   const CrearTarea = async () => {
-    const { values: formValues } = await Swal.fire({
+    const { value: formValues } = await Swal.fire({
       title: "Crear Tarea",
       html: `
-      <select id="id-maeteria" class="swal2-input">
-      ${materia.map(m => `<option value="${m.id}">
-        ${m.nombre_materia}
-        </option>`
-      ).join("")}
-      </select>
-      
-      <input id="nombre-tarea" class="swal2-input" placeholder="Nombre de la tarea">
-      <input id="fecha-tarea" class="swal2-input" type="date">`,
-
+        <select id="id-materia" class="swal2-input">
+          ${materias.map(m => `<option value="${m.id}">${m.nombre_materia}</option>`).join("")}
+        </select>
+        
+        <input id="nombre-tarea" class="swal2-input" placeholder="Nombre de la tarea">
+        <input id="fecha-tarea" class="swal2-input" type="date">
+        
+        <select id="estado-tarea" class="swal2-input">
+          <option value="pendiente">Pendiente</option>
+          <option value="en_proceso">En proceso</option>
+          <option value="realizado">Realizado</option>
+        </select>
+      `,
+      focusConfirm: false,
       preConfirm: () => {
+        const id_materia = document.getElementById("id-materia").value
+        const nombre_tarea = document.getElementById("nombre-tarea").value
+        const fecha = document.getElementById("fecha-tarea").value
+        const estado = document.getElementById("estado-tarea").value
+
+        if (!id_materia || !nombre_tarea || !fecha || !estado) {
+          Swal.showValidationMessage("Todos los campos son obligatorios")
+          return
+        }
+
+        const fechaISO = new Date(fecha).toISOString()
+
         return {
-          id_materia: document.getElementById("id-materia").value,
-          nombre_tarea: document.getElementById("nombre-tarea").value,
-          fecha_expiracion: document.getElementById("fecha-tarea").value
+          id_materia,
+          nombre_tarea,
+          fecha_creacion: fechaISO,
+          estado
         }
       }
     })
 
-    if (!formValues) return;
+    if (!formValues) return
+
+    console.log("FORM VALUES:", formValues)
+
     try {
-      const res = await api.get(`/crearTarea/${formValues.id_materia}`, { nombre_tarea: formValues.nombre_tarea, fecha_creacion: formValues.fecha });
+      const res = await api.post(
+        `/crearTarea/${formValues.id_materia}`,
+        {
+          nombre_tarea: formValues.nombre_tarea,
+          fecha_creacion: formValues.fecha_creacion,
+          estado: formValues.estado
+        }
+      )
 
-      setTareas(prev => [...prev, res.data.tareas]);
+      setTareas(prev => [...prev, res.data.tarea])
 
-      Swal.fire(
-        "Tarea Creada",
-        "La tarea se ha creado correctamente",
-        "Error"
-      );
+      Swal.fire("Tarea Creada", "La tarea se ha creado correctamente", "success")
     } catch (error) {
       console.error(error)
-      Swal.fire(
-        "Error",
-        "No se pudo crear la tarea",
-        "error"
-      );
+      Swal.fire("Error", "No se pudo crear la tarea", "error")
     }
   }
 
   const cargarMaterias = async () => {
     try {
-      const res = await api.get(`/listarMaterias/${id_usuario}`);
-
-      setMateria(res.data.materia);
+      const res = await api.get(`/listarMaterias/${id_usuario}`)
+      setMateria(res.data.materias)
     } catch (error) {
-      console.error(error);
-      console.log("No se han encontrado materias para el usuario");
+      console.log("No se han encontrado materias")
     }
   }
 
   const listarTareas = async () => {
     try {
-      const res = await api.get(`/Listartareas/${id_usuario}`)
-
-      setTareas(res.data.tareas);
+      const res = await api.get(`/listarTarea/${id_usuario}`)
+      setTareas(res.data.tareas)
     } catch (error) {
-      console.error(error);
-      Swal.fire(
-        "Error",
-        "No se pudieron encontrar tareas creadas para el usuario",
-        "error"
-      );
+      console.log(error)
+      Swal.fire("Error", "No se pudieron encontrar tareas", "error")
     }
-  };
+  }
+
   return (
     <div className="tareas-page">
-      <Navbar
-      // activeNav={activeNav}
-      // setActiveNav={setActiveNav}
-      // searchTerm={searchTerm}
-      // setSearchTerm={setSearchTerm}
-      />
-      {/* Main Content */}
+      <Navbar />
       <main className="main-content">
         <h1 className="page-title">Tareas</h1>
 
@@ -121,65 +126,27 @@ export default function Tareas() {
           </button>
         </div>
 
-
         <div className="tareas-grid">
           {tareas.map((tarea) => (
-            <div key={tarea.id} className={`tarea-card ${!tarea.enabled ? "disabled" : ""}`}>
+            <div key={tarea.id} className="tarea-card">
               <div className="card-header">
-                <h3 className="card-title">{tarea.nombre_materia}</h3>
-                <button
-                  className="edit-button"
-                  onClick={() => handleEditTask(tarea.id)}
-                  aria-label={`Editar tarea de ${tarea.materia}`}
-                >
-                  <EditIcon />
-                </button>
+                <h3 className="card-title">{tarea.nombre_tarea}</h3>
+                <EditIcon />
               </div>
 
               <div className="card-content">
-                <div className="task-item">
-                  <div className="bullet"></div>
-                  <span className="task-text">{tarea.task}</span>
-                </div>
-
-                <div className="date-info">
-                  <div>fecha de creacion: {tarea.creationDate}</div>
-                </div>
-
-                <div className="date-info">
-                  <div>Fecha de expiracion: {tarea.expirationDate}</div>
-                </div>
-              </div>
-
-              <div className="card-actions">
-                <div className="status-section">
-                  <div className="status-label">Estado:</div>
-                  <button
-                    className={`status-button status-${tarea.status}`}
-                    onClick={() => handleStatusClick(tarea.id, tarea.status)}
-                    disabled={!tarea.enabled}
-                  >
-                    {tarea.statusText}
-                  </button>
-                </div>
-
-                <button
-                  className="disable-button"
-                  onClick={() => handleDisableTask(tarea.id)}
-                  disabled={loadingStates[tarea.id]}
-                >
-                  {loadingStates[tarea.id] ? "Procesando..." : tarea.enabled ? "Deshabilitar" : "Habilitar"}
-                </button>
+                <div>Fecha creación: {new Date(tarea.fecha_creacion).toLocaleDateString()}</div>
+                <div>Estado: {tarea.estado}</div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="empty-state">
-          <h3>No se encontraron tareas</h3>
-          {/* <p>{searchTerm ? `No hay tareas que coincidan con "${searchTerm}"` : "Aún no has creado ninguna tarea"}</p> */}
-        </div>
-
+        {tareas.length === 0 && (
+          <div className="empty-state">
+            <h3>No se encontraron tareas</h3>
+          </div>
+        )}
       </main>
     </div>
   )

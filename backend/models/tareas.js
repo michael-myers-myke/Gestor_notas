@@ -1,6 +1,7 @@
 const db = require('../db/conection');
 
 exports.crearTarea = async (req, res) => {
+    
     const {id_materia} = req.params;
     const {nombre_tarea, fecha_creacion, estado} = req.body;
 
@@ -18,14 +19,15 @@ exports.crearTarea = async (req, res) => {
 
 
 exports.listarTarea = async (req, res) => {
-    const {id} = req.params;
+    const {id_usuario} = req.params;
 
     try {
         const result = await db.query(
-            "SELECT * FROM tareas WHERE id = $1", [id]
+            "select t.* from tareas t join materias m on t.id_materia = m.id where m.id_usuario =$1", 
+            [id_usuario]
         );
 
-        res.status(200).json({msg: "Las tareas son: ", tarea: result.rows[0]});
+        res.status(200).json({msg: "Las tareas son: ", tareas: result.rows});
     } catch (error) {
         res.status(500).json({msg: "Hubo un problema al listar las tareas: ", error: error.message});
     }
