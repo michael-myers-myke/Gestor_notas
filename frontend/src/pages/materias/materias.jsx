@@ -15,6 +15,8 @@ export default function Materias() {
   const [materias, setMaterias] = useState([]);
   const navigate = useNavigate();
   const id_usuario = userId();
+  const [busquedaMateria, setBusquedaMateria] = useState('');
+  const [materiasFiltradas, setMateriasFiltradas] = ([]);
 
   useEffect(() => {
     if (!autenticado()) {
