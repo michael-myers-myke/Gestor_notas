@@ -16,7 +16,7 @@ export default function Materias() {
   const navigate = useNavigate();
   const id_usuario = userId();
   const [busquedaMateria, setBusquedaMateria] = useState('');
-  const [materiasFiltradas, setMateriasFiltradas] = ([]);
+  
 
   useEffect(() => {
     if (!autenticado()) {
@@ -48,7 +48,7 @@ export default function Materias() {
       confirmButtonText: "Crear",
       cancelButtonText: "Cancelar",
       confirmButtonColor: "#3b82f6",
-      cancelButtonColor: "#6b7280",
+      cancelButtonColor: "#6b7280", 
       preConfirm: () => {
         const nombre = document.getElementById("swal-nombre").value
         const descripcion = document.getElementById("swal-descripcion").value
@@ -72,13 +72,6 @@ export default function Materias() {
           Swal.showValidationMessage("La descripción debe tener al menos 10 caracteres")
           return false
         }
-
-        // Verificar si ya existe una materia con el mismo nombre 
-        // const existingMateria = materias.find((m) => m.title.toLowerCase() === nombre.toLowerCase())
-        // if (existingMateria) {
-        //   Swal.showValidationMessage("Ya existe una materia con ese nombre")
-        //   return false
-        // }
 
         return { nombre, descripcion }
       }
@@ -128,12 +121,10 @@ export default function Materias() {
     </svg>
   )
 
-  // // Filtrar materias basado en la búsqueda
-  // const filteredMaterias = materias.filter(
-  //   (materia) =>
-  //     materia.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     materia.description.toLowerCase().includes(searchTerm.toLowerCase()),
-  // )
+  const filtrarMaterias = materias.filter((materia) =>
+    materia.nombre_materia.toLowerCase().includes(busquedaMateria.toLowerCase())
+  );
+
 
   return (
     <div className="materias-page">
@@ -147,7 +138,6 @@ export default function Materias() {
       {/* Main Content */}
       <main className="main-content">
         <h1 className="page-title">Materias</h1>
-
         <section>
           <section className="section-header">
             <h2 className="section-title">Tus materias creadas</h2>
@@ -157,8 +147,8 @@ export default function Materias() {
               <input
                 type="text"
                 placeholder="Buscar"
-                // value={searchTerm}
-                // onChange={handleSearch}
+                value={busquedaMateria}
+                onChange={(e) => busquedaMateria(e.target.value)}
                 className="search-input"
               />
             </div>

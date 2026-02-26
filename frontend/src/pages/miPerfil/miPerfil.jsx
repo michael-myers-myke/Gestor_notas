@@ -12,6 +12,13 @@ export default function miPerfil () {
         <div className="miPerfil-page">
             <main className="main-content">
                 <h1 className="page-tittle">Mi perfil</h1>
+
+                <div className="main-content">
+                    <div className="card">
+                        <h3>Bienvenido!</h3>
+                        <p></p>
+                    </div>
+                </div>
             </main>
         </div>
     )
