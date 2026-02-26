@@ -130,7 +130,7 @@ export default function Materias() {
     <div className="materias-page">
       {/* Navbar reutilizable */}
       <Navbar
-      // activeNav={activeNav}
+      // activeNav={activeNav} 
       // setActiveNav={setActiveNav}
       // searchTerm={searchTerm}
       // setSearchTerm={setSearchTerm}
@@ -148,7 +148,7 @@ export default function Materias() {
                 type="text"
                 placeholder="Buscar"
                 value={busquedaMateria}
-                onChange={(e) => busquedaMateria(e.target.value)}
+                onChange={(e) => setBusquedaMateria(e.target.value)}
                 className="search-input"
               />
             </div>
@@ -156,7 +156,7 @@ export default function Materias() {
 
 
           <div className="materias-grid">
-            {materias.map((materia) => (
+            {filtrarMaterias.map((materia) => (
               <div key={materia.id} className="materia-card">
                 <div>
                   <h3 className="materia-title">{materia.nombre_materia}</h3>
