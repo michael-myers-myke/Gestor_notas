@@ -1,8 +1,13 @@
-"use client"
-
 import { useState } from "react"
+import { useEffect } from "react"
 import "./dashboard.css"
-import Navbar from "../../components/navbar"
+import { useNavigate } from "react-router-dom"
+import { userId } from "../../services/auth"
+import { autenticado } from "../../services/auth"
+import api from "../../services/api"
+import Navbar from "../../components/navbar"  
+
+import Swal from "sweetalert2"
 
 // Iconos SVG como componentes
 const EditIcon = () => (
@@ -12,137 +17,80 @@ const EditIcon = () => (
 )
 
 export default function Dashboard() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [activeNav, setActiveNav] = useState("Inicio")
+  const [tareas, setTareas] = useState([]);
+  const navigate = useNavigate();
+  const id_usuario = userId()
 
-  // Datos de las materias
-  const subjects = [
-    {
-      id: "1",
-      title: "Química",
-      task: "Ejercicios ley de mendel",
-      creationDate: "5/4/2025",
-      expirationDate: "11/6/2025",
-      status: "en-proceso",
-      statusText: "En proceso",
-    },
-    {
-      id: "2",
-      title: "Física",
-      task: "Taller 2 fisica 1",
-      creationDate: "5/4/2025",
-      expirationDate: "11/6/2025",
-      status: "realizado",
-      statusText: "Realizado",
-    },
-    {
-      id: "3",
-      title: "Inglés",
-      task: "Estudiar ingles",
-      creationDate: "5/4/2025",
-      expirationDate: "11/6/2025",
-      status: "por-empezar",
-      statusText: "Por empezar",
-    },
-  ]
-
-
-
-  const handleEditCard = (cardId) => {
-    console.log(`Editando tarjeta: ${cardId}`)
-    alert(`Editando materia con ID: ${cardId}`)
-  }
-
-  const handleStatusClick = (cardId, currentStatus) => {
-    console.log(`Cambiando estado de ${cardId} desde ${currentStatus}`)
-
-    // Ciclo de estados
-    const statusCycle = {
-      "por-empezar": { next: "en-proceso", text: "En proceso" },
-      "en-proceso": { next: "realizado", text: "Realizado" },
-      realizado: { next: "por-empezar", text: "Por empezar" },
+  useEffect(() => {
+    if (!autenticado()) {
+      navigate('/login')
+      return
     }
+    listarTareas()
+  }, [navigate]);
 
-    const nextStatus = statusCycle[currentStatus]
-    alert(`Estado cambiado a: ${nextStatus.text}`)
+  const listarTareas = async () => {
+    try {
+      const res = await api.get(`/ListarTarea/${id_usuario}`)
+      setTareas(res.data.tareas)
+    } catch (error) {
+      // console.log(error);
+      Swal.fire("Error", "No se encontraron Tareas", "error");
+    }
   }
-
-  // Filtrar materias basado en la búsqueda
-  const filteredSubjects = subjects.filter(
-    (subject) =>
-      subject.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      subject.task.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
-
+  
   return (
-    <div className="dashboard">
-      {/* Navbar reutilizable */}
-      <Navbar
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
-      {/* Main Content */}
-      <main className="main-content">
-        <h1 className="welcome-title">Welcome Michael</h1>
-
-        <section>
-          <h2 className="section-title">Acceso Rapido</h2>
-
-          <div className="cards-grid">
-            {filteredSubjects.length > 0 ? (
-              filteredSubjects.map((subject) => (
-                <div key={subject.id} className="subject-card">
-                  <div className="card-header">
-                    <h3 className="card-title">{subject.title}</h3>
-                    <button
-                      className="edit-button"
-                      onClick={() => handleEditCard(subject.id)}
-                      aria-label={`Editar ${subject.title}`}
-                      title={`Editar ${subject.title}`}
-                    >
-                      <EditIcon />
-                    </button>
-                  </div>
-
-                  <div className="card-content">
-                    <div className="task-item">
-                      <div className="bullet"></div>
-                      <span className="task-text">{subject.task}</span>
-                    </div>
-
-                    <div className="date-info">
-                      <div>fecha de creacion: {subject.creationDate}</div>
-                    </div>
-
-                    <div className="date-info">
-                      <div>Fecha de expiracion: {subject.expirationDate}</div>
-                    </div>
-                  </div>
-
-                  <div className="status-section">
-                    <div>
-                      <div className="status-label">Estado:</div>
-                      <button
-                        className={`status-button status-${subject.status}`}
-                        onClick={() => handleStatusClick(subject.id, subject.status)}
-                        title="Click para cambiar estado"
-                      >
-                        {subject.statusText}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-results">
-                <p>No se encontraron materias que coincidan con "{searchTerm}"</p>
-              </div>
-            )}
+      <div className="tareas-page">
+        <Navbar />
+        <main className="main-content">
+          <h1 className="page-title">Tareas</h1>
+  
+          <div className="section-header">
+            <h2 className="section-title">Tus Tareas creadas</h2>
+            {/* <button className="create-task-button" onClick={CrearTarea}>
+              Crear tarea
+            </button> */}
+            {/* <div className="search-container">
+              <SearchIcon />
+              <input
+                type="text"
+                placeholder="Buscar"
+                value={busquedaTarea}
+                onChange={(e) => setBusquedaTarea(e.target.value)}
+                className="search-input"
+              />
+            </div> */}
           </div>
-        </section>
-      </main>
-    </div>
-  )
-}
+  
+          <div className="tareas-grid">
+            {tareas.map((tarea) => (
+              <div key={tarea.id} className="tarea-card">
+                <div className="card-header">
+                  <h3 className="card-title">{tarea.nombre_tarea}</h3>
+                  <EditIcon />
+                </div>
+  
+                <div className="card-content">
+                  <div>Fecha creación: {new Date(tarea.fecha_creacion).toLocaleDateString()}</div>
+                  <div>Estado: {tarea.estado}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+  
+          {/* <div className="create-button-container">
+            <button className="create-button" onClick={CrearTarea}>
+              Crear tarea
+            </button>
+          </div> */}
+  
+          {tareas.length === 0 && (
+            <div className="empty-state">
+              <h3>No se encontraron tareas</h3>
+            </div>
+          )}
+        </main>
+      </div>
+    )
+  }
+  
