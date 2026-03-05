@@ -116,7 +116,7 @@ function Registro () {
           </form>
 
           <div className="login-link">
-            <button type="button" className="link-button">
+            <button type="button" className="link-button" onClick={() => navigate("/login")}>
               Iniciar sesion
             </button>
           </div>

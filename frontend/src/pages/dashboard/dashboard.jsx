@@ -30,8 +30,8 @@ export default function Dashboard() {
   }, [navigate]);
 
   const listarTareas = async () => {
-    try {
-      const res = await api.get(`/ListarTarea/${id_usuario}`)
+    try { 
+      const res = await api.get(`/listarTarea/${id_usuario}`)
       setTareas(res.data.tareas)
     } catch (error) {
       // console.log(error);
@@ -77,15 +77,10 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-  
-          {/* <div className="create-button-container">
-            <button className="create-button" onClick={CrearTarea}>
-              Crear tarea
-            </button>
-          </div> */}
-  
+        
+        
           {tareas.length === 0 && (
-            <div className="empty-state">
+            <div className="empty-state"> 
               <h3>No se encontraron tareas</h3>
             </div>
           )}

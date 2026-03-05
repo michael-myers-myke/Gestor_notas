@@ -14,9 +14,9 @@ function Registro() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/login', {email, password})
+      const res = await api.post('/login', { email, password })
 
-      if(res.data.token){
+      if (res.data.token) {
         localStorage.setItem('token', res.data.token);
 
         Swal.fire({
@@ -28,7 +28,7 @@ function Registro() {
         navigate('/dashboard');
 
         const decoded = jwtDecode(res.data.token);
-      }else {
+      } else {
 
         await Swal.fire({
           icon: "error",
@@ -39,13 +39,13 @@ function Registro() {
     } catch (error) {
       console.log(error)
 
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         Swal.fire({
           icon: "error",
           title: "Error al iniciar sesion",
           text: "Datos incorrectos, intenta nuevamente"
         })
-      }else {
+      } else {
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -109,7 +109,6 @@ function Registro() {
                 className={`input`}
                 required
               />
-              {/* {errors.password && <span className="error-message">{errors.password}</span>} */}
             </div>
 
             <button type="submit" className="submit-button">
@@ -117,7 +116,9 @@ function Registro() {
             </button>
           </form>
 
-          
+          <div className="login-link">
+            <button type="button" className="link-button" onClick={() => navigate("/registro")}>Registrarse</button>
+          </div>
         </div>
       </div>
     </div>
