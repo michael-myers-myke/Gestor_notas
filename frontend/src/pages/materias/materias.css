@@ -66,6 +66,10 @@ body {
   margin-bottom: 1rem;
 }
 
+.search-container {
+  gap: 20px;
+}
+
 .materia-description {
   color: #6b7280;
   font-size: 1rem;
@@ -135,6 +139,40 @@ body {
 }
 
 .create-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/*Boton deshabilitadas*/
+.deshabilitadas-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.deshabilitadas-button {
+  background-color: #f5e14b;
+  color: white;
+  border: none;
+  border-radius: 1.5rem;
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  min-width: 200px;
+}
+
+.deshabilitadas-button:hover {
+  background-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.deshabilitadas-button:active {
+  transform: scale(0.98);
+}
+
+.deshabilitadas-button:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }

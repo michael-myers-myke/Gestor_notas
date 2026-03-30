@@ -16,7 +16,7 @@ export default function Materias() {
   const navigate = useNavigate();
   const id_usuario = userId();
   const [busquedaMateria, setBusquedaMateria] = useState('');
-  
+
 
   useEffect(() => {
     if (!autenticado()) {
@@ -48,7 +48,7 @@ export default function Materias() {
       confirmButtonText: "Crear",
       cancelButtonText: "Cancelar",
       confirmButtonColor: "#3b82f6",
-      cancelButtonColor: "#6b7280", 
+      cancelButtonColor: "#6b7280",
       preConfirm: () => {
         const nombre = document.getElementById("swal-nombre").value
         const descripcion = document.getElementById("swal-descripcion").value
@@ -151,6 +151,11 @@ export default function Materias() {
                 onChange={(e) => setBusquedaMateria(e.target.value)}
                 className="search-input"
               />
+
+              <button className="deshabilitadas-button">
+                Deshabilitadas
+              </button>
+
             </div>
           </section>
 
