@@ -35,7 +35,7 @@ export default function Navbar({ activeNav, setActiveNav, searchTerm, setSearchT
   }
 
   const handleProfileClick = () => {
-    alert("Ir a perfil de usuario")
+    navigate("/Perfil")
   }
 
   const handleLogoutClick = () => {

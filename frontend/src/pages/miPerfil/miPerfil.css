@@ -1,0 +1,126 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* Page Title */
+.page-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0 0 30px 0;
+  color: #000;
+}
+
+/* Profile Card */
+.profile-card {
+  border: 1px solid #000;
+  border-radius: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.avatar-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar svg {
+  color: #000;
+}
+
+/* Profile Info */
+.profile-info {
+  padding: 30px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-row {
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.info-label {
+  font-weight: bold;
+  font-size: 16px;
+  width: 180px;
+  text-align: right;
+  padding-right: 30px;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #000;
+}
+
+.info-value.email {
+  text-decoration: underline;
+  color: #000;
+}
+
+/* Edit Button */
+.edit-button {
+  background-color: #4ade80;
+  color: #000;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 40px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.edit-button:hover {
+  background-color: #22c55e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .nav-center {
+    gap: 20px;
+  }
+
+  .profile-info {
+    padding: 20px 30px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    text-align: center;
+    gap: 5px;
+  }
+
+  .info-label {
+    text-align: center;
+    width: 100%;
+    padding-right: 0;
+  }
+}

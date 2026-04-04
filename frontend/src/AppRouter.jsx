@@ -6,6 +6,7 @@ import Materias from './pages/materias/materias';
 import MateriasDeshabilitadas from './pages/materias/materiasDeshabilitadas';
 import Tareas from './pages/tareas/tareas';
 import TareasDeshbilitadas from './pages/tareas/tareasDeshabilitadas';
+import MiPerfil from "./pages/miPerfil/miPerfil";
 
 function AppRouter() {
     return (
@@ -17,6 +18,7 @@ function AppRouter() {
             <Route path="/materiasDeshabilitadas" element={< MateriasDeshabilitadas/>}></Route>
             <Route path="/tareas" element={< Tareas/>}></Route>
             <Route path="/tareasDeshabilitadas" element={< TareasDeshbilitadas/>}></Route>
+            <Route path="/perfil" element={< MiPerfil/>}></Route>
         </Routes>
     )
 }
