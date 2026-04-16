@@ -12,8 +12,8 @@ const {verificarToken, Propietario} = require('../auth/middlewares/auth.middlewa
 
 //Enrutadores para llamarlos desde postman o la API
 router.post('/crearUsuario', crearUsuarios);
-router.get('/listarUsuarios/:id', verificarToken, Propietario, listarUsuarios);
-router.put('/actualizarUsuario/:id', verificarToken, Propietario, actualizarUsuario);
+router.get('/listarUsuarios/:id_usuario', verificarToken, Propietario, listarUsuarios);
+router.put('/actualizarUsuario/:id_usuario', verificarToken, Propietario, actualizarUsuario);
 
 
 module.exports = {

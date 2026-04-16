@@ -1,7 +1,83 @@
 import "./miPerfil.css";
 import Navbar from "../../components/navbar"
+import { useEffect, useState } from "react";
+import { userId } from "../../services/auth";
+import { autenticado } from "../../services/auth";
+import { Navigate, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import api from "../../services/api";
 
 export default function MiPerfil() {
+    const [usuario, setUsuario] = useState("");
+    const id_usuario = userId();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!autenticado) {
+            navigate("/login");
+            return;
+        }
+
+        ObtenerUsuario();
+    }, [navigate]);
+
+    const editarUsuario = async () => {
+        const { value: formValues } = await Swal.fire({
+            title: "Editar Perfil",
+            html: `
+            <input id="swal-nombre" class="swal2-input" placeholder="Nombre" value="${usuario?.nombre || ""}" />
+            <input id="swal-email" class="swal2-input" placeholder="Correo" value="${usuario?.email || ""}" />
+        `,
+            showCancelButton: true,
+            confirmButtonText: "Guardar",
+            cancelButtonText: "Cancelar",
+            preConfirm: () => {
+                const nombre = document.getElementById("swal-nombre").value;
+                const email = document.getElementById("swal-email").value;
+
+                if (!nombre) {
+                    Swal.showValidationMessage("El nombre es obligatorio");
+                    return;
+                }
+
+                if (!email) {
+                    Swal.showValidationMessage("El correo es obligatorio");
+                    return;
+                }
+
+                return { nombre, email };
+            }
+        });
+
+        if (!formValues) return;
+
+        try {
+            const res = await api.put(`/actualizarUsuario/${id_usuario}`, {
+                nombre: formValues.nombre,
+                email: formValues.email
+            });
+
+            setUsuario(res.data.usuario);
+
+            Swal.fire("Actualizado", "Perfil actualizado correctamente", "success");
+
+        } catch (error) {
+            Swal.fire("Error", "No se pudo actualizar el usuario", "error");
+        }
+    };
+
+    const ObtenerUsuario = async () => {
+        try {
+            const res = await api.get(`/listarUsuarios/${id_usuario}`);
+            setUsuario(res.data.usuario);
+        } catch (error) {
+            console.error("Hubo un problema al obtener el usuario");
+        }
+    }
+
+
+
+
     return (
         <div className="page-container">
             <Navbar />
@@ -29,20 +105,16 @@ export default function MiPerfil() {
                     <div className="profile-info">
                         <div className="info-row">
                             <span className="info-label">Nombre Usuario:</span>
-                            <span className="info-value">Michael</span>
+                            <span className="info-value">{usuario?.nombre}</span>
                         </div>
                         <div className="info-row">
                             <span className="info-label">Correo electronico:</span>
                             <a href="mailto:michael@gmail.com" className="info-value email">
-                                michael@gmail.com
+                                {usuario?.email}
                             </a>
                         </div>
-                        <div className="info-row">
-                            <span className="info-label">Rol:</span>
-                            <span className="info-value">Administrador</span>
-                        </div>
 
-                        <button className="edit-button">Editar</button>
+                        <button className="edit-button" onClick={editarUsuario}>Editar</button>
                     </div>
                 </div>
             </main>

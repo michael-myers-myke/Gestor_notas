@@ -11,7 +11,7 @@ const {
 
 router.post('/crearTarea/:id_materia', crearTarea);
 router.get('/listarTarea/:id_usuario', listarTarea);
-router.put('/actualizarTarea/:id', actualizarTarea);
+router.put('/actualizarTarea/:id_usuario', actualizarTarea);
 
 
 module.exports = {
