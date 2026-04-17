@@ -19,7 +19,7 @@ exports.verificarToken = async (req, res, next) => {
 }
 
 exports.Propietario = async (req, res, next) => {
-    const idUsuario = Number(req.params.id);
+    const idUsuario = Number(req.params.id_usuario);
 
     if(req.user.id !== idUsuario){
         return res.status(401).json({msg: "Usuario No autorizado"});

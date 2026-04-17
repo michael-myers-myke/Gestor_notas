@@ -20,10 +20,10 @@
 
     //Funcion para listar los usuarios
     exports.listarUsuarios = async (req, res) => {
-        const {id} = req.params;
+        const {id_usuario} = req.params;
         try {
             const result = await db.query(
-                "SELECT * FROM usuarios WHERE id = $1 ", [id]
+                "SELECT * FROM usuarios WHERE id = $1 ", [id_usuario]
             );
 
             res.status(200).json({msg: 'El usuario es: ', usuario: result.rows[0] });
@@ -34,11 +34,11 @@
 
     //Funcion para actualizar los usuarios
     exports.actualizarUsuario = async (req, res) => {
-        const {id} = req.params;
+        const {id_usuario} = req.params;
         const {nombre, email} = req.body;
         try {
             const result = await db.query(
-                "UPDATE usuarios SET nombre = $1, email = $2 WHERE id = $3 RETURNING *", [nombre,email,id]
+                "UPDATE usuarios SET nombre = $1, email = $2 WHERE id = $3 RETURNING *", [nombre,email,id_usuario]
             );
 
             res.status(200).json({msg: 'usuario actualizado correctamente: ', usuario: result.rows[0] });

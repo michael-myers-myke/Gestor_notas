@@ -13,7 +13,7 @@ export default function MiPerfil() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!autenticado) {
+        if (!autenticado()) {
             navigate("/login");
             return;
         }
